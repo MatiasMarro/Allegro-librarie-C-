@@ -9,6 +9,9 @@ void mover_nave(float &cx, float &cy,float &vx, float &vy);
 void rotar(float &x, float &y, float cx ,float cy , float da);
 void aceleracion(float da, float &vx, float &vy);
 void pintar_motor(float da, float cx, float cy, BITMAP *buffer);
+void medidor_combustible(bool gastar_combustible,float &combustible,BITMAP *buffer);
+
+void pintar_nivel(int num_nivel, BITMAP *buffer );
 
 
 int main()
@@ -22,30 +25,38 @@ int main()
     float cx,cy;
     float vx,vy;
     cx=100;cy=100;
+    float combustible = 100; // 100 significa tanque lleno
+    int num_nivel = 2;
 
 
     while(!key[KEY_ESC]){
+        bool gastar_combustible = false;
         clear_to_color(buffer, 0x000000);
+        pintar_nivel(num_nivel,buffer);
         mover_nave(cx,cy,vx,vy);
 
-        if(key[KEY_UP]){
+        if(key[KEY_UP] && combustible > 0){
             aceleracion(0,vx,vy); // Cuando el angulo = 0, vamos a tener una aceleracion hacia arriba
             pintar_motor(0,cx,cy,buffer);
+            gastar_combustible = true;
         }
-        if(key[KEY_RIGHT]){
+        if(key[KEY_RIGHT] && combustible > 0){
             aceleracion(-90,vx,vy);
             pintar_motor(-90,cx,cy,buffer);
+            gastar_combustible = true;
         }
-        if(key[KEY_LEFT]){
+        if(key[KEY_LEFT] && combustible > 0 ){
             aceleracion(90,vx,vy);
             pintar_motor(90,cx,cy,buffer);
+            gastar_combustible = true;
         }
 
+        medidor_combustible(gastar_combustible,combustible,buffer);
         pintar_nave(cx,cy,buffer);
         blit(buffer,screen,0,0,0,0,740,500);
 
 
-        rest(20);
+        rest(10);
 
 
     }
@@ -83,7 +94,7 @@ void pintar_nave(float cx, float cy,BITMAP *buffer){
 void mover_nave(float &cx, float &cy,float &vx, float &vy){
     float ax,ay;
     ax = 0;
-    ay = 0.1;
+    ay = 0.095;
 
     vx += ax;
     vy += ay;
@@ -127,5 +138,27 @@ void pintar_motor(float da, float cx, float cy, BITMAP *buffer){
     for(int i =0;i<=10 ; i+=2){
         line(buffer, fuego[i],fuego[i+1],fuego[i+2],fuego[i+3],0x999999);
     }
+
+}
+
+void medidor_combustible(bool gastar_combustible,float &combustible,BITMAP *buffer){
+    textout_centre_ex(buffer,font,"combostible",100,30, 0x999999, 0x00000);
+    rectfill(buffer,50,50,50+combustible,55,0x999999);
+    if(gastar_combustible == true){
+        combustible -=0.2;
+    }
+}
+
+void pintar_nivel(int num_nivel, BITMAP *buffer ){
+    if(num_nivel == 1){
+        rectfill(buffer, 10,450,100,500,0x999999);
+    }
+    if(num_nivel == 2){
+        triangle(buffer,400,500,300,500,300,200,0x999999);
+        triangle(buffer,400,0,500,0,500,400,0x999999);
+        triangle(buffer,620,500,700,500,620,300,0x999999);
+       rectfill(buffer, 10,450,100,500,0x999999);
+    }
+
 
 }
