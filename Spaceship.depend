@@ -1,5 +1,6 @@
 # depslib dependency file v1.0
-1634502561 source:c:\users\matias\desktop\c++proyecto 3\spaceship\main.cpp
+1634505363 source:c:\users\matias\desktop\c++proyecto 3\spaceship\main.cpp
 	<iostream>
 	<allegro.h>
+	<cmath>
 
